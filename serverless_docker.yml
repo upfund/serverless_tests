@@ -1,0 +1,56 @@
+service: your-awesome-project
+
+# DOC :
+# TUTO 1 : https://aws.plainenglish.io/5-easy-steps-to-deploy-your-containers-as-lambda-functions-de9314f074f1
+# MAC M1 Carefull : https://github.com/aws/aws-lambda-base-images/issues/26
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - .serverless/**
+
+
+plugins:
+  - serverless-python-requirements #https://www.serverless.com/plugins/serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    dockerFile: Dockerfile
+    slim: true
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+  ecr:
+    images:
+      appimage:
+        path: ./
+  memorySize: 1769
+  timeout: 900
+  versionFunctions: false
+  iamRoleStatements: #https://medium.com/tech-carnot/triggering-one-aws-lambda-from-another-using-the-serverless-framework-816006b27b8f
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "*"
+
+# https://www.serverless.com/framework/docs/providers/aws/guide/functions
+functions:
+  simplejsonFunc1:
+    name: simplejsonFunc1
+    description: Base dir example
+    image:
+      name: appimage
+      workingDirectory: /var/task/simplejsonFunc
+      command:
+        - simplejsonFunc.function.handler
+
+  testBaseDirectory:
+    name: testBaseDirectory
+    description: Base dir example
+    image:
+      name: appimage
+      command:
+        - myfunction.lambda_handler

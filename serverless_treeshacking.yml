@@ -1,0 +1,51 @@
+
+service: your-awesome-project
+
+package:
+    individually: true
+
+provider:
+  name: aws
+  runtime: python3.8
+  memorySize: 1769
+  timeout: 900
+  versionFunctions: false
+  iamRoleStatements: #https://medium.com/tech-carnot/triggering-one-aws-lambda-from-another-using-the-serverless-framework-816006b27b8f
+    - Effect: "Allow"
+      Action:
+        - "lambda:InvokeFunction"
+      Resource: "*"
+
+plugins:
+  - serverless-package-python-functions
+
+custom:
+  pkgPyFuncs:
+    requirementsFile: requirements.txt # Name of your function-level pip requirements files. Must be the same for all functions
+    globalRequirements: # Path to global requirements files
+      - ./globalRequirements.txt
+    globalIncludes: # Path to folder with global dependencies
+      - ./common_files
+    buildDir: _build  # Name of build directory
+    cleanup: true # Clean build directory after packaging?
+
+functions:
+  simplejsonFunc:
+    name: simplejsonFunc
+    description: Requires simplejson library
+    handler: function.handler
+    package:
+      include:
+        - ./simplejsonFunc
+      artifact: ${self:custom.pkgPyFuncs.buildDir}/${self:functions.simplejsonFunc.name}.zip
+
+  jinja2Func:
+    name: jinja2Func
+    handler: function.handler
+    description: Requires jinja2 library
+    package:
+      include:
+        - ./jinja2Func
+      artifact: ${self:custom.pkgPyFuncs.buildDir}/${self:functions.jinja2Func.name}.zip
+
+

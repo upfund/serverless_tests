@@ -1,0 +1,2 @@
+from common_files.common2 import common2_function
+from common_files.common1 import common1_function

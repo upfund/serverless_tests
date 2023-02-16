@@ -1,0 +1,28 @@
+/.idea/
+*/data/*
+/node_modules/*
+.run/*
+.run
+.aws-sam
+/.serverless/*
+.serverless
+/psycopg2/*
+awslambda-psycopg2
+psycopg2
+*/__pycache__/*
+.DS_Store
+/tmp/*
+venv/
+*.cpython
+nohup.out
+application.pid
+*.log
+__pycache__/
+s_*
+serverless_sdk
+/temp
+layer
+layers
+_build
+#Clean all __pycache :
+#find . | grep -E "(/__pycache__$|\.pyc$|\.pyo$)" | xargs rm -rf
